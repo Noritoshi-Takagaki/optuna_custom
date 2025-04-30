@@ -82,6 +82,10 @@ class _ParzenEstimator:
     def log_pdf(self, samples_dict: dict[str, np.ndarray]) -> np.ndarray:
         transformed_samples = self._transform(samples_dict)
         return self._mixture_distribution.log_pdf(transformed_samples)
+    
+    def log_pdf_given_distributions(self, samples_dict: dict[str, np.ndarray], distributions: list[_BatchedDistributions]) -> np.ndarray:
+        transformed_samples = self._transform(samples_dict)
+        return self._mixture_distribution.log_pdf_given_distributions(transformed_samples, distributions)
 
     @staticmethod
     def _call_weights_func(weights_func: Callable[[int], np.ndarray], n: int) -> np.ndarray:

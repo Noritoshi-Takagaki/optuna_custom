@@ -1,0 +1,54 @@
+How to specify the prior distribution
+(Code that should be added or changed to the normal optimization code)
+
+>Commonly required
+###
+from optuna.samplers._tpe.sampler import TPESampler
+import numpy as np
+###
+
+>Categorical variable x(below and above)
+###
+from optuna.samplers._tpe.probability_distributions import _BatchedTruncNormDistributions
+
+batched_distributions_below_distributions_for_x = _BatchedTruncNormDistributions(
+    mu=np.array([3.0]),		# mu
+    sigma=np.array([0.3]),	# sigma
+    low=-4.5,			# Lower Limit of Definition Range
+    high=4.5			# Upper Limit of Definition Range
+)
+batched_distributions_above_distributions_for_x = _BatchedTruncNormDistributions(
+    mu=np.array([-2.0]),
+    sigma=np.array([2.5]),
+    low=-4.5,
+    high=4.5
+)
+###
+
+>Non-Categorical variable c(below and above)
+###
+from optuna.samplers._tpe.probability_distributions import _BatchedCategoricalDistributions
+
+batched_distributions_below_distributions_for_c = _BatchedCategoricalDistributions(
+    weights=np.array([[0.05, 0.95]])
+)
+
+batched_distributions_above_distributions_for_c = _BatchedCategoricalDistributions(
+    weights=np.array([[0.95, 0.05]])
+)
+###
+
+>Required prior to creation of study
+###
+try_sampler = TPESampler()
+
+try_sampler._below_distributions = {"x": [batched_distributions_below_distributions_for_x], 
+                                    "c": [batched_distributions_below_distributions_for_c]}
+try_sampler._above_distributions = {"x": [batched_distributions_above_distributions_for_x], 
+                                    "c": [batched_distributions_above_distributions_for_c]}
+###
+
+>Specifying sampler
+###
+study = optuna.create_study(sampler = try_sampler, direction = "minimize")
+###
