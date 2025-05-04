@@ -83,6 +83,8 @@ class TPESampler(BaseSampler):
         categorical_distance_func: (
             dict[str, Callable[[CategoricalChoiceType, CategoricalChoiceType], float]] | None
         ) = None,
+        below_distributions: dict[str, Any] | None = None,
+        above_distributions: dict[str, Any] | None = None,
     ) -> None:
         if not consider_prior:
             msg = _deprecated._DEPRECATION_WARNING_TEMPLATE.format(
@@ -116,6 +118,9 @@ class TPESampler(BaseSampler):
         self._constraints_func = constraints_func
         # NOTE(nabenabe0928): Users can overwrite _ParzenEstimator to customize the TPE behavior.
         self._parzen_estimator_cls = _ParzenEstimator
+
+        self._below_distributions = below_distributions
+        self._above_distributions = above_distributions
 
         if multivariate:
             warn_experimental_argument("multivariate")
@@ -316,13 +321,17 @@ class TPESampler(BaseSampler):
     ) -> np.ndarray:
         t = len(study.trials)
         #print(list(samples)[0])
+        scale_factor = t/beta
         log_likelihoods_below = mpe_below.log_pdf(samples)
         log_likelihoods_above = mpe_above.log_pdf(samples)
-        log_likelihoods_below_given_distributions = mpe_below.log_pdf_given_distributions(samples, self._below_distributions[list(samples)[0]])
-        log_likelihoods_above_given_distributions = mpe_above.log_pdf_given_distributions(samples, self._above_distributions[list(samples)[0]])
-        scale_factor = t/beta
-        acq_func_vals = log_likelihoods_below_given_distributions + scale_factor * log_likelihoods_below - log_likelihoods_above_given_distributions - scale_factor * log_likelihoods_above
+        if self._below_distributions is None or self._above_distributions is None:
+            print("d")
+            acq_func_vals = log_likelihoods_below - log_likelihoods_above
         #acq_func_vals = log_likelihoods_below - log_likelihoods_above
+        else:
+            log_likelihoods_below_given_distributions = mpe_below.log_pdf_given_distributions(samples, self._below_distributions[list(samples)[0]])
+            log_likelihoods_above_given_distributions = mpe_above.log_pdf_given_distributions(samples, self._above_distributions[list(samples)[0]])
+            acq_func_vals = log_likelihoods_below_given_distributions + scale_factor * log_likelihoods_below - log_likelihoods_above_given_distributions - scale_factor * log_likelihoods_above
         return acq_func_vals
 
     @classmethod

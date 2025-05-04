@@ -39,8 +39,6 @@ batched_distributions_above_distributions_for_y = _BatchedTruncNormDistributions
 
 try_sampler = TPESampler()
 
-try_sampler._below_distributions = {"x": [batched_distributions_below_distributions_for_x], 
-                                    "y": [batched_distributions_below_distributions_for_y]}
 try_sampler._above_distributions = {"x": [batched_distributions_above_distributions_for_x], 
                                     "y": [batched_distributions_above_distributions_for_y]}
 
