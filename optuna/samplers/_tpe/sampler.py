@@ -320,18 +320,34 @@ class TPESampler(BaseSampler):
         beta: float = 10  # ユーザーが指定するβの定数
     ) -> np.ndarray:
         t = len(study.trials)
-        #print(list(samples)[0])
         scale_factor = t/beta
         log_likelihoods_below = mpe_below.log_pdf(samples)
         log_likelihoods_above = mpe_above.log_pdf(samples)
+        #print(list(samples)) #
+        #print(log_likelihoods_below) #
+        #print(log_likelihoods_above) #
         if self._below_distributions is None or self._above_distributions is None:
-            print("d")
             acq_func_vals = log_likelihoods_below - log_likelihoods_above
-        #acq_func_vals = log_likelihoods_below - log_likelihoods_above
+        elif self._multivariate:
+            log_likelihoods_below_given_distributions_list = []
+            log_likelihoods_above_given_distributions_list = []
+            acq_func_vals = scale_factor * log_likelihoods_below - scale_factor * log_likelihoods_above
+            #print(range(len(list(samples)))) #
+            for i in range(len(list(samples))): #他変量分布が積の形で表されると仮定
+                log_likelihoods_below_given_distributions_list.append(mpe_below.log_pdf_given_distributions(samples, self._below_distributions[list(samples)[i]]))
+                log_likelihoods_above_given_distributions_list.append(mpe_above.log_pdf_given_distributions(samples, self._above_distributions[list(samples)[i]]))
+                acq_func_vals += log_likelihoods_below_given_distributions_list[i]
+                acq_func_vals -= log_likelihoods_above_given_distributions_list[i]
+                #print(acq_func_vals) #
+                #print(list(samples)[i]) #
+                #print(log_likelihoods_below_given_distributions_list[i]) #
+                #print(log_likelihoods_above_given_distributions_list[i]) #
         else:
             log_likelihoods_below_given_distributions = mpe_below.log_pdf_given_distributions(samples, self._below_distributions[list(samples)[0]])
             log_likelihoods_above_given_distributions = mpe_above.log_pdf_given_distributions(samples, self._above_distributions[list(samples)[0]])
-            acq_func_vals = log_likelihoods_below_given_distributions + scale_factor * log_likelihoods_below - log_likelihoods_above_given_distributions - scale_factor * log_likelihoods_above
+            #print(log_likelihoods_below_given_distributions) #
+            #print(log_likelihoods_above_given_distributions) #
+            acq_func_vals = log_likelihoods_below_given_distributions + scale_factor * log_likelihoods_below - log_likelihoods_above_given_distributions - scale_factor * log_likelihoods_above     
         return acq_func_vals
 
     @classmethod

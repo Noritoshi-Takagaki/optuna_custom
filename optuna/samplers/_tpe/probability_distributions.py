@@ -81,7 +81,6 @@ class _MixtureOfProductDistribution(NamedTuple):
     def log_pdf(self, x: np.ndarray) -> np.ndarray:
         batch_size, n_vars = x.shape
         log_pdfs = np.empty((batch_size, len(self.weights), n_vars), dtype=np.float64)
-        #print(self.distributions)
         for i, d in enumerate(self.distributions):
             xi = x[:, i]
             if isinstance(d, _BatchedCategoricalDistributions):
@@ -141,8 +140,8 @@ class _MixtureOfProductDistribution(NamedTuple):
         batch_size, n_vars = x.shape
         n_components = len(self.weights)
         log_pdfs = np.empty((batch_size, n_components, n_vars), dtype=np.float64)
+
         for i, d in enumerate(distributions):
-            #print(i)
             xi = x[:, i]
             if isinstance(d, _BatchedCategoricalDistributions):
                 log_pdfs[:, :, i] = np.log(
