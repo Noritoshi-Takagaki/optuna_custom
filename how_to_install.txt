@@ -1,0 +1,6 @@
+GitHubからのインストール
+pip install git+https://github.com/Noritoshi-Takagaki/optuna_custom.git
+※optunaというパッケージ名でインストールされます
+
+最新版へのアップデート
+pip install --upgrade git+https://github.com/Noritoshi-Takagaki/optuna_custom.git
