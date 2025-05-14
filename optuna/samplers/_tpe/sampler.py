@@ -323,6 +323,7 @@ class TPESampler(BaseSampler):
         scale_factor = t/beta
         log_likelihoods_below = mpe_below.log_pdf(samples)
         log_likelihoods_above = mpe_above.log_pdf(samples)
+        print("ok")
         #print(list(samples)) #
         #print(log_likelihoods_below) #
         #print(log_likelihoods_above) #
