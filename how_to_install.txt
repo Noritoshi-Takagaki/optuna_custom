@@ -4,3 +4,6 @@ pip install git+https://github.com/Noritoshi-Takagaki/optuna_custom.git
 
 最新版へのアップデート
 pip install --upgrade git+https://github.com/Noritoshi-Takagaki/optuna_custom.git
+
+強制再インストール
+pip install --force-reinstall --no-cache-dir git+https://github.com/Noritoshi-Takagaki/optuna_custom.git
