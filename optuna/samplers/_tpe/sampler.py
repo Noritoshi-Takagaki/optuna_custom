@@ -328,6 +328,7 @@ class TPESampler(BaseSampler):
         #print(log_likelihoods_above) #
         if self._below_distributions is None or self._above_distributions is None:
             acq_func_vals = log_likelihoods_below - log_likelihoods_above
+            print("custom") #
         elif self._multivariate:
             log_likelihoods_below_given_distributions_list = []
             log_likelihoods_above_given_distributions_list = []
