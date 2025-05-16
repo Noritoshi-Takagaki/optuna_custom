@@ -53,4 +53,4 @@ study.optimize(objective, n_trials=100)
 # 結果の表示
 print(f"Best objective value: {study.best_value}")
 print(f"Best parameter: {study.best_params}")
-optuna.visualization.plot_optimization_history(study).show()
+#optuna.visualization.plot_optimization_history(study).show()
